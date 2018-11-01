@@ -1,2 +1,12 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
+
+- name: Start service apacheds, on boot
+  service:
+    name: "{{ apacheds_version }}"
+    enabled: yes
+
+- name: Start service httpd, if not started
+  service:
+    name: "{{ apacheds_version }}"
+    state: restarted
