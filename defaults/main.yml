@@ -1,4 +1,4 @@
 ---
 # defaults file for hmpps-delius-core-apacheds-bootstrap
 
-apacheds_version = "apacheds-2.0.0.AM25-default"
+apacheds_version: "apacheds-2.0.0.AM25-default"
