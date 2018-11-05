@@ -6,7 +6,54 @@
     name: "{{ apacheds_version }}"
     enabled: yes
 
-- name: Start service httpd, if not started
+- name: Start service apacheds, if not started
+  become: yes
   service:
     name: "{{ apacheds_version }}"
     state: restarted
+
+- name: Copy LDIFs
+  template:
+    src: '{{ item.file }}.j2'
+    dest: '{{ workspace }}/{{ item.file }}'
+    mode: 0644
+    owner: apacheds
+    group: apacheds
+  with_items:
+    - { file: partition.ldif }
+    - { file: context.ldif }
+    - { file: schema.ldif }
+    - { file: test-user.ldif }
+
+- name: Create partition
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/partition.ldif'
+  no_log: '{{ hide_passwords_in_log }}'
+
+- name: Restart ApacheDS to pick up the partition
+  become: yes
+  service:
+    name: "{{ apacheds_version }}"
+    state: restarted
+
+- name: Create context entry
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/context.ldif'
+  no_log: '{{ hide_passwords_in_log }}'
+
+- name: Import ldap schema
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/schema.ldif'
+  no_log: '{{ hide_passwords_in_log }}'
+
+# TODO download catalogues from S3, ldapadd them, create service users
+
+#- name: Create test user
+#  when: create_test_user
+#  become: yes
+#  become_user: apacheds
+#  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-user.ldif'
+#  no_log: '{{ hide_passwords_in_log }}'
