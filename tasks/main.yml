@@ -25,6 +25,51 @@
     - { file: schema.ldif }
     - { file: test-user.ldif }
 
+- name: Download role catalogues
+  when: s3_dependencies_bucket is defined
+  aws_s3:
+    bucket: '{{ s3_dependencies_bucket }}'
+    object: '/dependencies/delius-core/NDelius-{{ ndelius_version }}/scripts/User Data Store/{{ item.file }}'
+    dest: '{{ workspace }}/{{ item.file }}'
+    mode: get
+  with_items:
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
+
+- name: Set file ownership
+  when: s3_dependencies_bucket is defined
+  become: yes
+  file:
+    path: '{{ workspace }}/{{ item.file }}'
+    owner: apacheds
+    group: apacheds
+  with_items:
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
+
+- name: Copy local role catalogues
+  when: s3_dependencies_bucket is not defined
+  copy:
+    src: 's3/dependencies/delius-core/NDelius-{{ ndelius_version }}/scripts/User Data Store/{{ item.file }}'
+    dest: '{{ workspace }}/{{ item.file }}'
+    owner: apacheds
+    group: apacheds
+    mode: 0644
+  with_items:
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
+
+- name: Replace context in LDIFs
+  become: yes
+  become_user: apacheds
+  replace:
+    path: '{{ workspace }}/{{ item.file }}'
+    regexp: 'dc=pcms,dc=internal'
+    replace: '{{ base_root }}'
+  with_items:
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
+
 - name: Create partition
   become: yes
   become_user: apacheds
@@ -37,23 +82,20 @@
     name: "{{ apacheds_version }}"
     state: restarted
 
-- name: Create context entry
+- name: Import LDIFs
   become: yes
   become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/context.ldif'
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
   no_log: '{{ hide_passwords_in_log }}'
+  with_items:
+    - { file: context.ldif }
+    - { file: schema.ldif }
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
 
-- name: Import ldap schema
+- name: Create test user
+  when: create_test_user
   become: yes
   become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/schema.ldif'
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-user.ldif'
   no_log: '{{ hide_passwords_in_log }}'
-
-# TODO download catalogues from S3, ldapadd them, create service users
-
-#- name: Create test user
-#  when: create_test_user
-#  become: yes
-#  become_user: apacheds
-#  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-user.ldif'
-#  no_log: '{{ hide_passwords_in_log }}'
