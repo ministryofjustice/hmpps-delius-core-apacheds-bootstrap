@@ -5,7 +5,7 @@ apacheds_version: "apacheds-2.0.0.AM25-default"
 
 s3_dependencies_bucket: tf-eu-west-2-hmpps-eng-dev-delius-core-dependencies-s3bucket
 
-workspace: /tmp
+workspace: /tmp/apacheds-bootstrap
 
 ldap_protocol: ldap
 ldap_port: 10389

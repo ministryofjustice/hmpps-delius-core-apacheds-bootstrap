@@ -12,13 +12,25 @@
     name: "{{ apacheds_version }}"
     state: restarted
 
+- name: Wait for apacheds to start
+  wait_for:
+    port: 10389
+
+- name: Create workspace if it doesn't exist
+  become: yes
+  become_user: apacheds
+  file:
+    path: '{{ workspace }}'
+    state: directory
+    mode: 0755
+
 - name: Copy LDIFs
+  become: yes
+  become_user: apacheds
   template:
     src: '{{ item.file }}.j2'
     dest: '{{ workspace }}/{{ item.file }}'
     mode: 0644
-    owner: apacheds
-    group: apacheds
   with_items:
     - { file: partition.ldif }
     - { file: context.ldif }
@@ -27,22 +39,13 @@
 
 - name: Download role catalogues
   when: s3_dependencies_bucket is defined
+  become: yes
+  become_user: apacheds
   aws_s3:
     bucket: '{{ s3_dependencies_bucket }}'
     object: '/dependencies/delius-core/NDelius-{{ ndelius_version }}/scripts/User Data Store/{{ item.file }}'
     dest: '{{ workspace }}/{{ item.file }}'
     mode: get
-  with_items:
-    - { file: nd_role_catalogue.ldif }
-    - { file: nd_role_groups.ldif }
-
-- name: Set file ownership
-  when: s3_dependencies_bucket is defined
-  become: yes
-  file:
-    path: '{{ workspace }}/{{ item.file }}'
-    owner: apacheds
-    group: apacheds
   with_items:
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
@@ -81,6 +84,10 @@
   service:
     name: "{{ apacheds_version }}"
     state: restarted
+
+- name: Wait for apacheds to start
+  wait_for:
+    port: 10389
 
 - name: Import LDIFs
   become: yes
