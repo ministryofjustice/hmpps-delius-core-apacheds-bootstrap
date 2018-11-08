@@ -17,8 +17,9 @@ partition_id: moj
 partition_context_entry: dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top
 base_root: dc=moj,dc=com
 base_users: cn=Users,{{ base_root }}
+base_service_users: cn=EISUsers,{{ base_users }}
 base_roles: cn=ndRoleCatalogue,{{ base_users }}
 base_rolegroups: cn=ndRoleGroups,{{ base_users }}
 
-create_test_user: yes
+create_test_users: yes
 hide_passwords_in_log: yes

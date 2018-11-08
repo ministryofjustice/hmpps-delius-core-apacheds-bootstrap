@@ -1,7 +1,8 @@
-dn:cn=test.user,{{ base_users }}
-cn:test.user
-uid:test.user
-mail:test.user
+dn:cn={{ item }},{{ base_users }}
+cn:{{ item }}
+uid:{{ item }}
+mail:{{ item }}
+userpassword: {SSHA}ODU/1Shs0GsfCe+IdCBn0Avtsk7XeDNZz8Tq0A==
 description:This is a test user
 givenname:Test
 sn:User
@@ -13,62 +14,62 @@ objectclass:organizationalPerson
 objectclass:person
 objectclass:top
 
-dn:cn=UserPreferences,cn=test.user,{{ base_users }}
+dn:cn=UserPreferences,cn={{ item }},{{ base_users }}
 locale:en
 objectclass:UserPreferences
 objectclass:top
 cn:UserPreferences
 
-dn:cn=UPBT001,cn=test.user,{{ base_users }}
+dn:cn=UPBT001,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UPBT001,{{ base_roles }}
 cn: UPBT001
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0001,cn=test.user,{{ base_users }}
+dn:cn=UABT0001,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0001,{{ base_roles }}
 cn: UABT0001
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0002,cn=test.user,{{ base_users }}
+dn:cn=UABT0002,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0002,{{ base_roles }}
 cn: UABT0002
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0003,cn=test.user,{{ base_users }}
+dn:cn=UABT0003,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0003,{{ base_roles }}
 cn: UABT0003
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0005,cn=test.user,{{ base_users }}
+dn:cn=UABT0005,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0005,{{ base_roles }}
 cn: UABT0005
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0050,cn=test.user,{{ base_users }}
+dn:cn=UABT0050,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0050,{{ base_roles }}
 cn: UABT0050
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0051,cn=test.user,{{ base_users }}
+dn:cn=UABT0051,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0051,{{ base_roles }}
 cn: UABT0051
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 
-dn:cn=UABT0052,cn=test.user,{{ base_users }}
+dn:cn=UABT0052,cn={{ item }},{{ base_users }}
 aliasedobjectname:cn=UABT0052,{{ base_roles }}
 cn: UABT0052
 objectclass: NDRoleAssociation

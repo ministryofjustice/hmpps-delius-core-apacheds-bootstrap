@@ -35,7 +35,7 @@
     - { file: partition.ldif }
     - { file: context.ldif }
     - { file: schema.ldif }
-    - { file: test-user.ldif }
+    - { file: service-users.ldif }
 
 - name: Download role catalogues
   when: s3_dependencies_bucket is defined
@@ -115,7 +115,7 @@
   wait_for:
     port: 10389
 
-- name: Import roles and groups
+- name: Import roles, groups and service users
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
@@ -124,10 +124,22 @@
     - { file: context.ldif }
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
+    - { file: service-users.ldif }
 
-- name: Create test user
-  when: create_test_user
+- name: Create LDIFs for test users
+  when: create_test_users
   become: yes
   become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-user.ldif'
+  template:
+    src: 'test-user.ldif.j2'
+    dest: '{{ workspace }}/create-user-{{ item }}.ldif'
+    mode: 0644
+  with_sequence: start=1 end=99 format=NDelius%02d
+
+- name: Create test users
+  when: create_test_users
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/create-user-{{ item }}.ldif'
   no_log: '{{ hide_passwords_in_log }}'
+  with_sequence: start=1 end=99 format=NDelius%02d
