@@ -89,14 +89,39 @@
   wait_for:
     port: 10389
 
-- name: Import LDIFs
+- name: Import schema
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
+  no_log: '{{ hide_passwords_in_log }}'
+  with_items:
+    - { file: schema.ldif }
+
+- name: Replace Base64-encoded creatorsName attribute in schema with plaintext value
+  become: yes
+  become_user: apacheds
+  replace:
+    path: '~/default/partitions/schema/ou=schema/cn=subschemasubentry.ldif'
+    regexp: 'creatorsName:: [\w\W\n]+?(.+?):'
+    replace: 'creatorsName: {{ bind_user }}\n\1:'
+
+- name: Restart ApacheDS to pick up the schema
+  become: yes
+  service:
+    name: "{{ apacheds_version }}"
+    state: restarted
+
+- name: Wait for apacheds to start
+  wait_for:
+    port: 10389
+
+- name: Import roles and groups
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
   no_log: '{{ hide_passwords_in_log }}'
   with_items:
     - { file: context.ldif }
-    - { file: schema.ldif }
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
 
