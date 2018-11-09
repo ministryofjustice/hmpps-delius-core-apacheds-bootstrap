@@ -37,6 +37,7 @@
     - { file: schema.ldif }
     - { file: service-users.ldif }
     - { file: test-users.ldif }
+    - { file: modify-schema.ldif }
 
 - name: Download role catalogues
   when: s3_dependencies_bucket is defined
@@ -105,6 +106,12 @@
     path: '~/default/partitions/schema/ou=schema/cn=subschemasubentry.ldif'
     regexp: 'creatorsName:: [\w\W\n]+?(.+?):'
     replace: 'creatorsName: {{ bind_user }}\n\1:'
+
+- name: Modify existing schema objects
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-schema.ldif'
+  no_log: '{{ hide_passwords_in_log }}'
 
 - name: Restart ApacheDS to pick up the schema
   become: yes
