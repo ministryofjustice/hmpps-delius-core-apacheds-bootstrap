@@ -65,21 +65,21 @@ objectclass: alias
 objectclass: top
 cn: SPGBT000
 
-dn: cn=SPGBT001,cn={{ item }},cn=Users,dc=bcl,dc=local
+dn: cn=SPGBT001,cn={{ item }},{{ base_users }}
 aliasedobjectname: cn=SPGBT001,{{ base_roles }}
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 cn: SPGBT001
 
-dn: cn=SPGBT003,cn={{ item }},cn=Users,dc=bcl,dc=local
+dn: cn=SPGBT003,cn={{ item }},{{ base_users }}
 aliasedobjectname: cn=SPGBT003,{{ base_roles }}
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
 cn: SPGBT003
 
-dn: cn=SPGBT010,cn={{ item }},cn=Users,dc=bcl,dc=local
+dn: cn=SPGBT010,cn={{ item }},{{ base_users }}
 aliasedobjectname: cn=SPGBT010,{{ base_roles }}
 objectclass: NDRoleAssociation
 objectclass: alias
