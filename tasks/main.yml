@@ -38,6 +38,7 @@
     - { file: service-users.ldif }
     - { file: test-users.ldif }
     - { file: modify-schema.ldif }
+    - { file: modify-admin.ldif }
 
 - name: Download role catalogues
   when: s3_dependencies_bucket is defined
@@ -75,21 +76,17 @@
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
 
+- name: Update admin password
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w secret -f {{ workspace }}/modify-admin.ldif'
+  no_log: '{{ hide_passwords_in_log }}'
+
 - name: Create partition
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/partition.ldif'
   no_log: '{{ hide_passwords_in_log }}'
-
-- name: Restart ApacheDS to pick up the partition
-  become: yes
-  service:
-    name: "{{ apacheds_version }}"
-    state: restarted
-
-- name: Wait for apacheds to start
-  wait_for:
-    port: 10389
 
 - name: Import schema
   become: yes
@@ -113,7 +110,7 @@
   shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-schema.ldif'
   no_log: '{{ hide_passwords_in_log }}'
 
-- name: Restart ApacheDS to pick up the schema
+- name: Restart ApacheDS to pick up the schema and partition
   become: yes
   service:
     name: "{{ apacheds_version }}"

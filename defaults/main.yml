@@ -10,7 +10,7 @@ workspace: /tmp/apacheds-bootstrap
 ldap_protocol: ldap
 ldap_port: 10389
 bind_user: uid=admin,ou=system
-bind_password: secret
+bind_password: secret123
 ldap_connection: -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w {{ bind_password }}
 
 partition_id: moj
