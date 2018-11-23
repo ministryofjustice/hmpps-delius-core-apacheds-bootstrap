@@ -1,25 +1,25 @@
 ---
 # defaults file for hmpps-delius-core-apacheds-bootstrap
 
-apacheds_version: "apacheds-2.0.0.AM25-default"
-
 s3_dependencies_bucket: tf-eu-west-2-hmpps-eng-dev-delius-core-dependencies-s3bucket
 
-workspace: /tmp/apacheds-bootstrap
+apacheds_version: "apacheds-2.0.0.AM25-default"
 
 ldap_protocol: ldap
 ldap_port: 10389
 bind_user: uid=admin,ou=system
 bind_password: secret
+partition_id: moj
+
+create_test_users: yes
+hide_passwords_in_log: yes
+
+workspace: /tmp/apacheds-bootstrap
 ldap_connection: -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w {{ bind_password }}
 
-partition_id: moj
 partition_context_entry: dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top
-base_root: dc=moj,dc=com
+base_root: dc={{ partition_id }},dc=com
 base_users: cn=Users,{{ base_root }}
 base_service_users: cn=EISUsers,{{ base_users }}
 base_roles: cn=ndRoleCatalogue,{{ base_users }}
 base_rolegroups: cn=ndRoleGroups,{{ base_users }}
-
-create_test_users: yes
-hide_passwords_in_log: yes
