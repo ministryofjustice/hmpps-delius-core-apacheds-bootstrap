@@ -6,15 +6,8 @@
     name: "{{ apacheds_version }}"
     enabled: yes
 
-- name: Start service apacheds, if not started
-  become: yes
-  service:
-    name: "{{ apacheds_version }}"
-    state: restarted
-
-- name: Wait for apacheds to start
-  wait_for:
-    port: 10389
+- name: Restart apacheds
+  include: restart-apacheds.yml
 
 - name: Create workspace if it doesn't exist
   become: yes
@@ -79,21 +72,18 @@
 - name: Update admin password
   become: yes
   become_user: apacheds
-  shell: 'ldapmodify -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w secret -f {{ workspace }}/modify-admin.ldif'
-  no_log: '{{ hide_passwords_in_log }}'
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-admin.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
 
-- name: Create partition
-  become: yes
-  become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/partition.ldif'
-  no_log: '{{ hide_passwords_in_log }}'
-
-- name: Import schema
+- name: Create partition & import schema
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
-  no_log: '{{ hide_passwords_in_log }}'
+  environment:
+    bind_password: '{{ bind_password }}'
   with_items:
+    - { file: partition.ldif }
     - { file: schema.ldif }
 
 - name: Replace Base64-encoded creatorsName attribute in schema with plaintext value
@@ -108,32 +98,31 @@
   become: yes
   become_user: apacheds
   shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-schema.ldif'
-  no_log: '{{ hide_passwords_in_log }}'
+  environment:
+    bind_password: '{{ bind_password }}'
 
-- name: Restart ApacheDS to pick up the schema and partition
-  become: yes
-  service:
-    name: "{{ apacheds_version }}"
-    state: restarted
-
-- name: Wait for apacheds to start
-  wait_for:
-    port: 10389
+- name: Restart apacheds
+  include: restart-apacheds.yml
 
 - name: Import roles, groups and service users
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
-  no_log: '{{ hide_passwords_in_log }}'
+  environment:
+    bind_password: '{{ bind_password }}'
   with_items:
     - { file: context.ldif }
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
     - { file: service-users.ldif }
 
+- name: Restart apacheds
+  include: restart-apacheds.yml
+
 - name: Create test users
   when: create_test_users
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-users.ldif'
-  no_log: '{{ hide_passwords_in_log }}'
+  environment:
+    bind_password: '{{ bind_password }}'

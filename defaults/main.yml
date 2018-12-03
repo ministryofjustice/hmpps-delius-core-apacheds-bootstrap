@@ -12,10 +12,9 @@ bind_password: secret
 partition_id: moj
 
 create_test_users: yes
-hide_passwords_in_log: yes
 
 workspace: /tmp/apacheds-bootstrap
-ldap_connection: -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w {{ bind_password }}
+ldap_connection: -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}
 
 partition_context_entry: dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top
 base_root: dc={{ partition_id }},dc=com
