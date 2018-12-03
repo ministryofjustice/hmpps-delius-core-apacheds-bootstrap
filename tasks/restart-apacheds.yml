@@ -1,0 +1,11 @@
+---
+
+- name: Start service apacheds, if not started
+  become: yes
+  service:
+    name: "{{ apacheds_version }}"
+    state: restarted
+
+- name: Wait for apacheds to start
+  wait_for:
+    port: 10389
