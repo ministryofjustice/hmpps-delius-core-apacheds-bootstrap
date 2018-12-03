@@ -116,6 +116,9 @@
     - { file: nd_role_groups.ldif }
     - { file: service-users.ldif }
 
+- name: Restart apacheds
+  include: restart-apacheds.yml
+
 - name: Create test users
   when: create_test_users
   become: yes
