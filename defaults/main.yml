@@ -11,7 +11,8 @@ bind_user: uid=admin,ou=system
 bind_password: secret
 partition_id: moj
 
-create_test_users: yes
+import_users_ldif: IFSR3-181204.ldif
+sanitize_oid_ldif: yes
 
 workspace: /tmp/apacheds-bootstrap
 ldap_connection: -H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}
