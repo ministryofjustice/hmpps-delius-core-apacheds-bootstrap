@@ -119,10 +119,50 @@
 - name: Restart apacheds
   include: restart-apacheds.yml
 
-- name: Create test users
-  when: create_test_users
+- name: Download LDIF file for import
+  when: s3_dependencies_bucket is defined and import_users_ldif is defined
   become: yes
   become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/test-users.ldif'
+  aws_s3:
+    bucket: '{{ s3_dependencies_bucket }}'
+    object: '/ldapbackup/{{ import_users_ldif }}'
+    dest: '{{ workspace }}/{{ import_users_ldif }}'
+    mode: get
+
+- name: Copy local LDIF file for import
+  when: s3_dependencies_bucket is not defined and import_users_ldif is defined
+  copy:
+    src: 's3/ldapbackup/{{ import_users_ldif }}'
+    dest: '{{ workspace }}/{{ import_users_ldif }}'
+    owner: apacheds
+    group: apacheds
+    mode: 0644
+
+- name: Remove OID-specific stuff from LDIF
+  when: import_users_ldif is defined and sanitize_oid_ldif
+  replace:
+    path: '{{ workspace }}/{{ import_users_ldif }}'
+    regexp: '{{ item.regexp }}'
+    replace: ''
+  with_items:
+    - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=ALF,[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=c\d{2},[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=ndrolecatalogue,[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=ndrolegroups,[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=orcladmin,[\w\W]+?\n\n' }
+    - { regexp: '(?i)dn:.*cn=public,[\w\W]+?\n\n' }
+    - { regexp: '(?i)^objectclass: orcl.+?\n' }
+    - { regexp: '(?i)^authpassword.+?\n' }
+    - { regexp: '(?i)^orcl.+?\n' }
+    - { regexp: '(?i)^krbprincipalname.+?\n' }
+
+- name: Import users
+  when: import_users_ldif is defined
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
   environment:
     bind_password: '{{ bind_password }}'
