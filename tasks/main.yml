@@ -32,6 +32,16 @@
     - { file: modify-schema.ldif }
     - { file: modify-admin.ldif }
 
+- name: Update admin password
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-admin.ldif'
+  environment:
+    bind_password: 'secret'
+
+- name: Restart apacheds
+  include: restart-apacheds.yml
+
 - name: Download role catalogues
   when: s3_dependencies_bucket is defined
   become: yes
@@ -67,13 +77,6 @@
   with_items:
     - { file: nd_role_catalogue.ldif }
     - { file: nd_role_groups.ldif }
-
-- name: Update admin password
-  become: yes
-  become_user: apacheds
-  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-admin.ldif'
-  environment:
-    bind_password: '{{ bind_password }}'
 
 - name: Create partition & import schema
   become: yes
