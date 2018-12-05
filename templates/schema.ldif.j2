@@ -11,6 +11,56 @@ objectclass: organizationalUnit
 objectclass: top
 ou: attributetypes
 
+dn: ou=objectclasses,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: objectClasses
+
+dn: ou=comparators,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: comparators
+
+dn: ou=ditcontentrules,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: ditcontentrules
+
+dn: ou=ditstructurerules,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: ditstructurerules
+
+dn: ou=matchingrules,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: matchingrules
+
+dn: ou=matchingruleuse,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: matchingruleuse
+
+dn: ou=nameforms,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: nameforms
+
+dn: ou=normalizers,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: normalizers
+
+dn: ou=syntaxcheckers,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: syntaxcheckers
+
+dn: ou=syntaxes,cn=subschemasubentry,ou=schema
+objectclass: organizationalUnit
+objectclass: top
+ou: syntaxes
+
 dn: m-oid=1.1.1.1.1,ou=attributetypes,cn=subschemasubentry,ou=schema
 objectclass: metaAttributeType
 objectclass: metaTop
@@ -191,56 +241,6 @@ m-name: userHomeArea
 m-equality: caseIgnoreMatch
 m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: m-oid=1.1.1.1.26,ou=attributetypes,cn=subschemasubentry,ou=schema
-objectclass: metaAttributeType
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.26
-m-name: defaultCourt
-m-equality: caseIgnoreMatch
-m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
-
-dn: m-oid=1.1.1.1.40,ou=attributetypes,cn=subschemasubentry,ou=schema
-objectclass: metaAttributeType
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.40
-m-name: defaultTeam
-m-equality: caseIgnoreMatch
-m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
-
-dn: m-oid=1.1.1.1.41,ou=attributetypes,cn=subschemasubentry,ou=schema
-objectclass: metaAttributeType
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.41
-m-name: defaultStaff
-m-equality: caseIgnoreMatch
-m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
-
-dn: m-oid=1.1.1.1.44,ou=attributetypes,cn=subschemasubentry,ou=schema
-objectclass: metaAttributeType
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.44
-m-name: defaultPremisesGrouping
-m-equality: caseIgnoreMatch
-m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
-
-dn: m-oid=1.1.1.1.45,ou=attributetypes,cn=subschemasubentry,ou=schema
-objectclass: metaAttributeType
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.45
-m-name: defaultPremises
-m-equality: caseIgnoreMatch
-m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
-
-dn: ou=objectclasses,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: objectClasses
-
 dn: m-oid=1.1.1.1.21,ou=objectclasses,cn=subschemasubentry,ou=schema
 objectclass: metaObjectClass
 objectclass: metaTop
@@ -272,6 +272,59 @@ m-may: defaultTeam
 m-may: defaultStaff
 m-may: defaultPremisesGrouping
 m-may: defaultPremises
+
+dn: m-oid=1.1.1.1.22,ou=objectclasses,cn=subschemasubentry,ou=schema
+objectclass: metaObjectClass
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.22
+m-name: NDRole
+m-supObjectClass: top
+m-must: cn
+m-may: AdminLevel
+m-may: Level1
+m-may: Level2
+m-may: Level3
+m-may: Sector
+m-may: description
+m-may: UIBusinessInteractionCollection
+
+dn: m-oid=1.1.1.1.23,ou=objectclasses,cn=subschemasubentry,ou=schema
+objectclass: metaObjectClass
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.23
+m-name: NDRoleAssociation
+m-supObjectClass: alias
+m-must: cn
+
+dn: m-oid=1.1.1.1.24,ou=objectclasses,cn=subschemasubentry,ou=schema
+objectclass: metaObjectClass
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.24
+m-name: NDRoleGroup
+m-supObjectClass: top
+m-must: cn
+
+dn: m-oid=1.1.1.1.25,ou=objectclasses,cn=subschemasubentry,ou=schema
+objectclass: metaObjectClass
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.25
+m-name: NDUser
+m-supObjectClass: inetOrgPerson
+m-must: userSector
+m-may: userHomeArea
+
+dn: m-oid=1.1.1.1.26,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.26
+m-name: defaultCourt
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
 dn: m-oid=1.1.1.1.27,ou=attributetypes,cn=subschemasubentry,ou=schema
 objectclass: metaAttributeType
@@ -318,40 +371,6 @@ m-name: AdminLevel
 m-equality: caseIgnoreMatch
 m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: m-oid=1.1.1.1.22,ou=objectclasses,cn=subschemasubentry,ou=schema
-objectclass: metaObjectClass
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.22
-m-name: NDRole
-m-supObjectClass: top
-m-must: cn
-m-may: AdminLevel
-m-may: Level1
-m-may: Level2
-m-may: Level3
-m-may: Sector
-m-may: description
-m-may: UIBusinessInteractionCollection
-
-dn: m-oid=1.1.1.1.23,ou=objectclasses,cn=subschemasubentry,ou=schema
-objectclass: metaObjectClass
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.23
-m-name: NDRoleAssociation
-m-supObjectClass: alias
-m-must: cn
-
-dn: m-oid=1.1.1.1.24,ou=objectclasses,cn=subschemasubentry,ou=schema
-objectclass: metaObjectClass
-objectclass: metaTop
-objectclass: top
-m-oid: 1.1.1.1.24
-m-name: NDRoleGroup
-m-supObjectClass: top
-m-must: cn
-
 dn: m-oid=1.1.1.1.32,ou=attributetypes,cn=subschemasubentry,ou=schema
 objectclass: metaAttributeType
 objectclass: metaTop
@@ -361,57 +380,38 @@ m-name: userSector
 m-equality: caseIgnoreMatch
 m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: m-oid=1.1.1.1.25,ou=objectclasses,cn=subschemasubentry,ou=schema
-objectclass: metaObjectClass
+dn: m-oid=1.1.1.1.40,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
 objectclass: metaTop
 objectclass: top
-m-oid: 1.1.1.1.25
-m-name: NDUser
-m-supObjectClass: inetOrgPerson
-m-must: userSector
-m-may: userHomeArea
+m-oid: 1.1.1.1.40
+m-name: defaultTeam
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: ou=comparators,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
+dn: m-oid=1.1.1.1.41,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
 objectclass: top
-ou: comparators
+m-oid: 1.1.1.1.41
+m-name: defaultStaff
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: ou=ditcontentrules,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
+dn: m-oid=1.1.1.1.44,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
 objectclass: top
-ou: ditcontentrules
+m-oid: 1.1.1.1.44
+m-name: defaultPremisesGrouping
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
-dn: ou=ditstructurerules,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
+dn: m-oid=1.1.1.1.45,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
 objectclass: top
-ou: ditstructurerules
-
-dn: ou=matchingrules,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: matchingrules
-
-dn: ou=matchingruleuse,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: matchingruleuse
-
-dn: ou=nameforms,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: nameforms
-
-dn: ou=normalizers,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: normalizers
-
-dn: ou=syntaxcheckers,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: syntaxcheckers
-
-dn: ou=syntaxes,cn=subschemasubentry,ou=schema
-objectclass: organizationalUnit
-objectclass: top
-ou: syntaxes
+m-oid: 1.1.1.1.45
+m-name: defaultPremises
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
