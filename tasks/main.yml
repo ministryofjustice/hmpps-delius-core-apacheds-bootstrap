@@ -29,7 +29,6 @@
     - { file: context.ldif }
     - { file: schema.ldif }
     - { file: service-users.ldif }
-    - { file: test-users.ldif }
     - { file: modify-schema.ldif }
     - { file: modify-admin.ldif }
 
