@@ -218,6 +218,24 @@ m-name: defaultStaff
 m-equality: caseIgnoreMatch
 m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
+dn: m-oid=1.1.1.1.44,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.44
+m-name: defaultPremisesGrouping
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
+
+dn: m-oid=1.1.1.1.45,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.45
+m-name: defaultPremises
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
+
 dn: ou=objectclasses,cn=subschemasubentry,ou=schema
 objectclass: organizationalUnit
 objectclass: top
@@ -252,6 +270,8 @@ m-may: verboseHelp
 m-may: defaultCourt
 m-may: defaultTeam
 m-may: defaultStaff
+m-may: defaultPremisesGrouping
+m-may: defaultPremises
 
 dn: m-oid=1.1.1.1.27,ou=attributetypes,cn=subschemasubentry,ou=schema
 objectclass: metaAttributeType
