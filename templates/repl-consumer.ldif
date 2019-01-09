@@ -1,0 +1,18 @@
+dn: ads-replConsumerId={{ consumer_id }},ou=replConsumers,ads-serverId=ldapServer,ou=servers,ads-directoryServiceId=default,ou=config
+changetype: add
+objectClass: ads-replConsumer
+objectClass: ads-base
+ads-replConsumerId: {{ consumer_id }}
+ads-replProvHostName: {{ provider_host }}
+ads-replProvPort: {{ ldap_port }}
+ads-replUserDn: {{ bind_user }}
+ads-replUserPassword: {{ bind_password }}
+ads-replSearchTimeOut: 0
+ads-replSearchScope: sub
+ads-replSearchFilter: (objectClass=*)
+ads-replSearchSizeLimit: 0
+ads-replAttributes: *
+ads-replRefreshInterval: 60000
+ads-replRefreshNPersist: TRUE
+ads-replAliasDerefMode: never
+ads-searchBaseDN: ou=system
