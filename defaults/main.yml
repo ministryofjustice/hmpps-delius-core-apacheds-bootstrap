@@ -3,7 +3,7 @@
 
 s3_dependencies_bucket: tf-eu-west-2-hmpps-eng-dev-delius-core-dependencies-s3bucket
 
-apacheds_version: "apacheds-2.0.0.AM25-default"
+apacheds_version: apacheds-2.0.0.AM25-default
 
 ldap_protocol: ldap
 ldap_port: 10389
@@ -23,3 +23,6 @@ base_users: cn=Users,{{ base_root }}
 base_service_users: cn=EISUsers,{{ base_users }}
 base_roles: cn=ndRoleCatalogue,{{ base_users }}
 base_rolegroups: cn=ndRoleGroups,{{ base_users }}
+
+is_consumer: false
+consumer_id: consumer-{{ inventory_hostname }}

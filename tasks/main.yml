@@ -31,6 +31,8 @@
     - { file: service-users.ldif }
     - { file: modify-schema.ldif }
     - { file: modify-admin.ldif }
+    - { file: repl-provider.ldif }
+    - { file: repl-consumer.ldif }
 
 - name: Update admin password
   become: yes
@@ -100,6 +102,22 @@
   become: yes
   become_user: apacheds
   shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-schema.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a provider (master) node
+  when: not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a consumer (slave) node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
   environment:
     bind_password: '{{ bind_password }}'
 
