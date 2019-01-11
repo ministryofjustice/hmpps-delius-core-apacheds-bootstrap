@@ -106,7 +106,7 @@
     bind_password: '{{ bind_password }}'
 
 - name: Set host as a provider (master) node
-  when: is_consumer is false
+  when: not is_consumer
   become: yes
   become_user: apacheds
   shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
@@ -114,7 +114,7 @@
     bind_password: '{{ bind_password }}'
 
 - name: Set host as a consumer (slave) node
-  when: is_consumer is true
+  when: is_consumer
   become: yes
   become_user: apacheds
   shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
