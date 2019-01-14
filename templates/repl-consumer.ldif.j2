@@ -7,12 +7,12 @@ ads-replProvHostName: {{ provider_host }}
 ads-replProvPort: {{ ldap_port }}
 ads-replUserDn: {{ bind_user }}
 ads-replUserPassword: {{ bind_password }}
-ads-replSearchTimeOut: 0
-ads-replSearchScope: sub
+ads-searchBaseDN: {{ base_root }}
 ads-replSearchFilter: (objectClass=*)
+ads-replSearchScope: sub
+ads-replSearchTimeOut: 0
 ads-replSearchSizeLimit: 0
 ads-replAttributes: *
 ads-replRefreshInterval: 60000
 ads-replRefreshNPersist: TRUE
 ads-replAliasDerefMode: never
-ads-searchBaseDN: ou=system
