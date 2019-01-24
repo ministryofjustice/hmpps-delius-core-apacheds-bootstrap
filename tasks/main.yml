@@ -34,6 +34,16 @@
     - { file: repl-provider.ldif }
     - { file: repl-consumer.ldif }
 
+- name: Copy config
+  become: yes
+  become_user: apacheds
+  template:
+    src: '{{ item.file }}.j2'
+    dest: '{{ apacheds_install_directory }}/conf/{{ item.file }}'
+    mode: 0644
+  with_items:
+    - { file: log4j.properties }
+
 - name: Update admin password
   become: yes
   become_user: apacheds
