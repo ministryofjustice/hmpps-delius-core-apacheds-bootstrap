@@ -150,7 +150,7 @@
   include: restart-apacheds.yml
 
 - name: Download LDIF file for import
-  when: s3_dependencies_bucket is defined and import_users_ldif is defined
+  when: s3_dependencies_bucket is defined and import_users_ldif is defined and not is_consumer
   become: yes
   become_user: apacheds
   aws_s3:
@@ -160,7 +160,7 @@
     mode: get
 
 - name: Copy local LDIF file for import
-  when: s3_dependencies_bucket is not defined and import_users_ldif is defined
+  when: s3_dependencies_bucket is not defined and import_users_ldif is defined and not is_consumer
   copy:
     src: 's3/ldapbackup/{{ import_users_ldif }}'
     dest: '{{ workspace }}/{{ import_users_ldif }}'
@@ -169,7 +169,7 @@
     mode: 0644
 
 - name: Remove OID-specific stuff from LDIF
-  when: import_users_ldif is defined and sanitize_oid_ldif
+  when: import_users_ldif is defined and not is_consumer and sanitize_oid_ldif
   replace:
     path: '{{ workspace }}/{{ import_users_ldif }}'
     regexp: '{{ item.regexp }}'
@@ -190,9 +190,29 @@
     - { regexp: '(?i)^krbprincipalname.+?\n' }
 
 - name: Import users
-  when: import_users_ldif is defined
+  when: import_users_ldif is defined and not is_consumer
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Pull data from provider/master node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: >
+    ldapsearch
+    -H {{ ldap_protocol }}://{{ provider_host }}:{{ ldap_port }}
+    -D {{ bind_user }} -w ${bind_password}
+    -b {{ base_root }} "(objectclass=*)" > {{ workspace }}/master-data.ldif
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Import data from provider/master node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
   environment:
     bind_password: '{{ bind_password }}'
