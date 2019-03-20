@@ -5,6 +5,7 @@ s3_dependencies_bucket: tf-eu-west-2-hmpps-eng-dev-delius-core-dependencies-s3bu
 
 apacheds_version: apacheds-2.0.0.AM25-default
 apacheds_install_directory: /var/lib/apacheds-2.0.0.AM25/default
+apacheds_lib_directory: /opt/apacheds-2.0.0.AM25/lib
 
 ldap_protocol: ldap
 ldap_port: 10389

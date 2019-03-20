@@ -33,6 +33,7 @@
     - { file: modify-admin.ldif }
     - { file: repl-provider.ldif }
     - { file: repl-consumer.ldif }
+    - { file: interceptor.ldif }
 
 - name: Copy config
   become: yes
@@ -43,6 +44,14 @@
     mode: 0644
   with_items:
     - { file: log4j.properties }
+
+- name: Copy custom lib jar
+  become: yes
+  become_user: apacheds
+  copy:
+    src: 'files/NDelius-apacheds-lib-3.0.jar'
+    dest: '{{ apacheds_lib_directory }}/NDelius-apacheds-lib-3.0.jar'
+    mode: 0644
 
 - name: Update admin password
   become: yes
@@ -99,6 +108,7 @@
   with_items:
     - { file: partition.ldif }
     - { file: schema.ldif }
+    - { file: interceptor.ldif }
 
 - name: Replace Base64-encoded creatorsName attribute in schema with plaintext value
   become: yes
@@ -173,21 +183,23 @@
   replace:
     path: '{{ workspace }}/{{ import_users_ldif }}'
     regexp: '{{ item.regexp }}'
-    replace: ''
+    replace: '{{ item.replace }}'
   with_items:
-    - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=ALF,[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=c\d{2},[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=ndrolecatalogue,[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=ndrolegroups,[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=orcladmin,[\w\W]+?\n\n' }
-    - { regexp: '(?i)dn:.*cn=public,[\w\W]+?\n\n' }
-    - { regexp: '(?i)^objectclass: orcl.+?\n' }
-    - { regexp: '(?i)^authpassword.+?\n' }
-    - { regexp: '(?i)^orcl.+?\n' }
-    - { regexp: '(?i)^krbprincipalname.+?\n' }
+    - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=ALF,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=c\d{2},[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=ndrolecatalogue,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=ndrolegroups,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=orcladmin,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)dn:.*cn=public,[\w\W]+?\n\n', replace: '' }
+    - { regexp: '(?i)^orclActiveStartDate: ', replace: 'startDate: ' }
+    - { regexp: '(?i)^orclActiveEndDate: ', replace: 'endDate: ' }
+    - { regexp: '(?i)^objectclass: orcl.+?\n', replace: '' }
+    - { regexp: '(?i)^authpassword.+?\n', replace: '' }
+    - { regexp: '(?i)^orcl.+?\n', replace: '' }
+    - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
 
 - name: Import users
   when: import_users_ldif is defined and not is_consumer
