@@ -178,28 +178,33 @@
     group: apacheds
     mode: 0644
 
-- name: Remove OID-specific stuff from LDIF
+- name: Remove OID-specific stuff from LDIF and sort hierarchically
   when: import_users_ldif is defined and not is_consumer and sanitize_oid_ldif
-  replace:
-    path: '{{ workspace }}/{{ import_users_ldif }}'
-    regexp: '{{ item.regexp }}'
-    replace: '{{ item.replace }}'
-  with_items:
-    - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=ALF,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=c\d{2},[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=ndrolecatalogue,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=ndrolegroups,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=orcladmin,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)dn:.*cn=public,[\w\W]+?\n\n', replace: '' }
-    - { regexp: '(?i)^orclActiveStartDate: ', replace: 'startDate: ' }
-    - { regexp: '(?i)^orclActiveEndDate: ', replace: 'endDate: ' }
-    - { regexp: '(?i)^objectclass: orcl.+?\n', replace: '' }
-    - { regexp: '(?i)^authpassword.+?\n', replace: '' }
-    - { regexp: '(?i)^orcl.+?\n', replace: '' }
-    - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
+  block:
+    - replace:
+        path: '{{ workspace }}/{{ import_users_ldif }}'
+        regexp: '{{ item.regexp }}'
+        replace: '{{ item.replace }}'
+      with_items:
+        - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=ALF,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=c\d{2},[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=ndrolecatalogue,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=ndrolegroups,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=orcladmin,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)dn:.*cn=public,[\w\W]+?\n\n', replace: '' }
+        - { regexp: '(?i)^orclActiveStartDate: ', replace: 'startDate: ' }
+        - { regexp: '(?i)^orclActiveEndDate: ', replace: 'endDate: ' }
+        - { regexp: '(?i)^objectclass: orcl.+?\n', replace: '' }
+        - { regexp: '(?i)^authpassword.+?\n', replace: '' }
+        - { regexp: '(?i)^orcl.+?\n', replace: '' }
+        - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
+    - shell: >
+        perl -n00 -e 'push @a, $_; END { print sort { (() = (split /:/, $a)[1] =~ /,/g)<=>(() = (split /:/, $b)[1] =~ /,/g) } @a }' {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}.updated
+        && rm {{ workspace }}/{{ import_users_ldif }}
+        && mv {{ workspace }}/{{ import_users_ldif }}.updated {{ workspace }}/{{ import_users_ldif }}
 
 - name: Import users
   when: import_users_ldif is defined and not is_consumer
