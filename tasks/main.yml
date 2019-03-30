@@ -160,19 +160,19 @@
   include: restart-apacheds.yml
 
 - name: Download LDIF file for import
-  when: s3_dependencies_bucket is defined and import_users_ldif is defined and not is_consumer
+  when: s3_backups_bucket is defined and import_users_ldif is defined and not is_consumer
   become: yes
   become_user: apacheds
   aws_s3:
-    bucket: '{{ s3_dependencies_bucket }}'
-    object: '/ldapbackup/{{ import_users_ldif }}'
+    bucket: '{{ s3_backups_bucket }}'
+    object: '{{ import_users_ldif }}'
     dest: '{{ workspace }}/{{ import_users_ldif }}'
     mode: get
 
 - name: Copy local LDIF file for import
-  when: s3_dependencies_bucket is not defined and import_users_ldif is defined and not is_consumer
+  when: s3_backups_bucket is not defined and import_users_ldif is defined and not is_consumer
   copy:
-    src: 's3/ldapbackup/{{ import_users_ldif }}'
+    src: 's3/{{ import_users_ldif }}'
     dest: '{{ workspace }}/{{ import_users_ldif }}'
     owner: apacheds
     group: apacheds
