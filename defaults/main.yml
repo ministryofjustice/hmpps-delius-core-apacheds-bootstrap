@@ -2,6 +2,7 @@
 # defaults file for hmpps-delius-core-apacheds-bootstrap
 
 s3_dependencies_bucket: tf-eu-west-2-hmpps-eng-dev-delius-core-dependencies-s3bucket
+s3_backups_bucket: tf-eu-west-2-hmpps-delius-core-dev-backups-s3bucket
 
 apacheds_version: apacheds-2.0.0.AM25-default
 apacheds_install_directory: /var/lib/apacheds-2.0.0.AM25/default
