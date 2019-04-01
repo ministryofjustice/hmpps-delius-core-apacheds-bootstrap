@@ -1,6 +1,13 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: Wait for provider/master node
+  when: is_consumer
+  wait_for:
+    host: '{{ provider_host }}'
+    port: '{{ ldap_port }}'
+    delay: 300
+
 - name: Start service apacheds, on boot
   service:
     name: "{{ apacheds_version }}"
@@ -213,12 +220,6 @@
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
   environment:
     bind_password: '{{ bind_password }}'
-
-- name: Wait for provider/master node
-  when: is_consumer
-  wait_for:
-    host: '{{ provider_host }}'
-    port: '{{ ldap_port }}'
 
 - name: Pull data from provider/master node
   when: is_consumer
