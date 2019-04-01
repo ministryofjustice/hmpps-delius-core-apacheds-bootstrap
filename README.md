@@ -3,29 +3,35 @@ hmpps-delius-core-apacheds-bootstrap
 
 Bootstrap Ansible role to update our ApacheDS config
 
-Requirements
-------------
-
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```yaml
+s3_dependencies_bucket: S3 bucket name containing artefacts, local filesystem will be used if not specified
+s3_backups_bucket: S3 bucket name containing LDIF backups, local filesystem will be used if not specified
+ldap_protocol: Protocol to be used - ldap or ldaps 
+ldap_port: Port to expose ldap on
+bind_user: ApacheDS admin username
+bind_password: Desired admin password
+partition_id: Partition to create and load the schema into
+import_users_ldif: LDIF file to import from the s3_backups_bucket
+sanitize_oid_ldif: Whether to remove Oracle-specific attributes from the LDIF 
+is_consumer: Whether this node is a master (provider) or slave (consumer) node
+consumer_id: If is_consumer is set to true, it should be given an ID
+log_level: ApacheDS log level
+```
+See the full list of variable defaults in [defaults/main.yml](defaults/main.yml)
 
 Dependencies
 ------------
+There are some JARs included in the project that are used during the bootstrap:
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+* ldif-sort.jar - 
+Built from the GitHub project at [nano-byte/ldif-sort](https://github.com/nano-byte/ldif-sort) and stored in the files directory. 
+As migrated data from Oracle Internet Directory isn't guaranteed to be in the correct hierarchical order, this is used to correct it.
+* NDelius-apacheds-lib-3.0.jar -
+Provided by Beaumont Colson and provides interceptors for NDelius-specific LDAP attributes.
 
 License
 -------
