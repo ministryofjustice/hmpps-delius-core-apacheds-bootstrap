@@ -218,7 +218,7 @@
   when: is_consumer
   wait_for:
     host: '{{ provider_host }}'
-    port: '{{ provider_port }}'
+    port: '{{ ldap_port }}'
 
 - name: Pull data from provider/master node
   when: is_consumer
