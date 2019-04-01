@@ -159,6 +159,12 @@
 - name: Restart apacheds
   include: restart-apacheds.yml
 
+- name: Create LDIF directory
+  when: import_users_ldif is defined and not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'mkdir -p $(dirname {{ workspace }}/{{ import_users_ldif }})'
+
 - name: Download LDIF file for import
   when: s3_backups_bucket is defined and import_users_ldif is defined and not is_consumer
   become: yes
@@ -201,10 +207,12 @@
         - { regexp: '(?i)^authpassword.+?\n', replace: '' }
         - { regexp: '(?i)^orcl.+?\n', replace: '' }
         - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
-    - shell: >
-        perl -n00 -e 'push @a, $_; END { print sort { (() = (split /:/, $a)[1] =~ /,/g)<=>(() = (split /:/, $b)[1] =~ /,/g) } @a }' {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}.updated
-        && rm {{ workspace }}/{{ import_users_ldif }}
-        && mv {{ workspace }}/{{ import_users_ldif }}.updated {{ workspace }}/{{ import_users_ldif }}
+    - copy:
+        src: 'ldif-sort.jar'
+        dest: '{{ workspace }}/ldif-sort.jar'
+        mode: 0644
+    - shell: 'java -jar {{ workspace }}/ldif-sort.jar {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}-sorted'
+    - shell: 'mv {{ workspace }}/{{ import_users_ldif }}-sorted {{ workspace }}/{{ import_users_ldif }}'
 
 - name: Import users
   when: import_users_ldif is defined and not is_consumer
