@@ -133,22 +133,6 @@
   environment:
     bind_password: '{{ bind_password }}'
 
-- name: Set host as a provider (master) node
-  when: not is_consumer
-  become: yes
-  become_user: apacheds
-  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
-  environment:
-    bind_password: '{{ bind_password }}'
-
-- name: Set host as a consumer (slave) node
-  when: is_consumer
-  become: yes
-  become_user: apacheds
-  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
-  environment:
-    bind_password: '{{ bind_password }}'
-
 - name: Restart apacheds
   include: restart-apacheds.yml
 
@@ -241,3 +225,22 @@
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
   environment:
     bind_password: '{{ bind_password }}'
+
+- name: Set host as a provider (master) node
+  when: not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a consumer (slave) node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Restart apacheds
+  include: restart-apacheds.yml
