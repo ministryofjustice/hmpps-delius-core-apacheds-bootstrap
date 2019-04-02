@@ -1,6 +1,14 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: Wait for provider/master node
+  when: is_consumer
+  wait_for:
+    host: '{{ provider_host }}'
+    port: '{{ ldap_port }}'
+    delay: 300
+    timeout: 600
+
 - name: Start service apacheds, on boot
   service:
     name: "{{ apacheds_version }}"
@@ -125,22 +133,6 @@
   environment:
     bind_password: '{{ bind_password }}'
 
-- name: Set host as a provider (master) node
-  when: not is_consumer
-  become: yes
-  become_user: apacheds
-  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
-  environment:
-    bind_password: '{{ bind_password }}'
-
-- name: Set host as a consumer (slave) node
-  when: is_consumer
-  become: yes
-  become_user: apacheds
-  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
-  environment:
-    bind_password: '{{ bind_password }}'
-
 - name: Restart apacheds
   include: restart-apacheds.yml
 
@@ -239,5 +231,26 @@
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
+  register: importusers
+  failed_when: importusers.rc not in [0,68]
   environment:
     bind_password: '{{ bind_password }}'
+
+- name: Set host as a provider (master) node
+  when: not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a consumer (slave) node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Restart apacheds
+  include: restart-apacheds.yml
