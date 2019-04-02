@@ -223,6 +223,8 @@
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
+  register: importusers
+  failed_when: importusers.rc not in [0,68]
   environment:
     bind_password: '{{ bind_password }}'
 
