@@ -211,6 +211,8 @@
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
+  register: import_users_from_backup
+  failed_when: import_users_from_backup.rc not in [0,68]
   environment:
     bind_password: '{{ bind_password }}'
 
@@ -231,8 +233,8 @@
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
-  register: importusers
-  failed_when: importusers.rc not in [0,68]
+  register: import_users_from_master
+  failed_when: import_users_from_master.rc not in [0,68]
   environment:
     bind_password: '{{ bind_password }}'
 
