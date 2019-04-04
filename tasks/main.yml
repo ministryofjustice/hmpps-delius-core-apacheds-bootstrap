@@ -263,6 +263,6 @@
     name: Backup to S3
     special_time: daily
     job: >
-      ldapsearch {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > backup-$(date +%Y%m%d-%H%M%S).ldif &&
-      aws s3 cp backup-$(date +%Y%m%d-%H%M%S).ldif s3://{{ backups_bucket }}/ldap &&
-      rm backup-$(date +%Y%m%d-%H%M%S).ldif
+      ldapsearch {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > /tmp/backup-$(date +%Y%m%d-%H%M%S).ldif &&
+      aws s3 cp /tmp/backup-$(date +%Y%m%d-%H%M%S).ldif s3://{{ backups_bucket }}/ldap &&
+      rm /tmp/backup-$(date +%Y%m%d-%H%M%S).ldif
