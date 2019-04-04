@@ -254,3 +254,13 @@
 
 - name: Restart apacheds
   include: restart-apacheds.yml
+
+- name: Create a cron job to perform daily backups
+  when: not is_consumer
+  cron:
+    name: Backup to S3
+    special_time: daily
+    job: >
+      ldapsearch {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > backup-$(date +%Y%m%d-%H%M%S).ldif &&
+      aws s3 cp backup-$(date +%Y%m%d-%H%M%S).ldif s3://{{ backups_bucket }}/ldap &&
+      rm backup-$(date +%Y%m%d-%H%M%S).ldif
