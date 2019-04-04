@@ -151,6 +151,18 @@
 - name: Restart apacheds
   include: restart-apacheds.yml
 
+- name: Get the name of the latest backup
+  when: import_users_ldif == 'LATEST'
+  become: yes
+  become_user: apacheds
+  shell: "aws s3 ls s3://{{ s3_backups_bucket }}/ldap/ --recursive | sort | tail -n 1 | awk '{print $4}'"
+  register: latest_backup
+
+- name: Store the name of the latest backup
+  when: import_users_ldif == 'LATEST'
+  set_fact:
+    import_users_ldif: '{{ latest_backup.stdout }}'
+
 - name: Create LDIF directory
   when: import_users_ldif is defined and not is_consumer
   become: yes
@@ -221,7 +233,7 @@
   become: yes
   become_user: apacheds
   shell: >
-    ldapsearch
+    ldapsearch -L
     -H {{ ldap_protocol }}://{{ provider_host }}:{{ ldap_port }}
     -D {{ bind_user }} -w ${bind_password}
     -b {{ base_root }} "(objectclass=*)" > {{ workspace }}/master-data.ldif
@@ -256,3 +268,15 @@
 
 - name: Restart apacheds
   include: restart-apacheds.yml
+
+- name: Create a cron job to perform daily backups
+  when: not is_consumer
+  cron:
+    name: Backup to S3
+    special_time: daily
+    job: >
+      backupfile=/tmp/backup-$(date +%Y%m%d-%H%M%S).ldif &&
+      bind_password=$(aws ssm get-parameter --region eu-west-2 --with-decryption --name /{{ environment_name }}/{{ project_name }}/apacheds/apacheds/ldap_admin_password | jq -r .Parameter.Value) &&
+      ldapsearch -L {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > ${backupfile} &&
+      aws s3 cp ${backupfile} s3://{{ s3_backups_bucket }}/ldap/ &&
+      rm ${backupfile}
