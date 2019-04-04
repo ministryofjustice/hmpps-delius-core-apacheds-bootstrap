@@ -155,7 +155,7 @@
   when: import_users_ldif == 'LATEST'
   become: yes
   become_user: apacheds
-  shell: "$(aws s3 ls s3://{{ s3_backups_bucket }}/ldap/ --recursive | sort | tail -n 1 | awk '{print $4}')"
+  shell: "aws s3 ls s3://{{ s3_backups_bucket }}/ldap/ --recursive | sort | tail -n 1 | awk '{print $4}'"
   register: latest_backup
 
 - name: Store the name of the latest backup
