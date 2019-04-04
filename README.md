@@ -15,7 +15,7 @@ ldap_port: Port to expose ldap on
 bind_user: ApacheDS admin username
 bind_password: Desired admin password
 partition_id: Partition to create and load the schema into
-import_users_ldif: LDIF file to import from the s3_backups_bucket
+import_users_ldif: LDIF file to import from the s3_backups_bucket. This can be set to LATEST to retrieve the latest backup from S3.
 sanitize_oid_ldif: Whether to remove Oracle-specific attributes from the LDIF 
 is_consumer: Whether this node is a master (provider) or slave (consumer) node
 consumer_id: If is_consumer is set to true, it should be given an ID
