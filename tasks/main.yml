@@ -275,8 +275,8 @@
     name: Backup to S3
     special_time: daily
     job: >
-      backupfile=/tmp/backup-$(date +%Y%m%d-%H%M%S).ldif &&
+      (backupfile=/tmp/backup-$(date +%Y%m%d-%H%M%S).ldif &&
       bind_password=$(aws ssm get-parameter --region eu-west-2 --with-decryption --name /{{ environment_name }}/{{ project_name }}/apacheds/apacheds/ldap_admin_password | jq -r .Parameter.Value) &&
       ldapsearch -L {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > ${backupfile} &&
       aws s3 cp ${backupfile} s3://{{ s3_backups_bucket }}/ldap/ &&
-      rm ${backupfile}
+      rm -f ${backupfile}) >> /var/log/daily-backup.log 2>&1
