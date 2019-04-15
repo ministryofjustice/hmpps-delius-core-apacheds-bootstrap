@@ -191,6 +191,12 @@
 - name: Remove OID-specific stuff from LDIF and sort hierarchically
   when: import_users_ldif is defined and not is_consumer and sanitize_oid_ldif
   block:
+    - copy:
+        src: 'ldif-sort.jar'
+        dest: '{{ workspace }}/ldif-sort.jar'
+        mode: 0644
+    - shell: 'java -jar {{ workspace }}/ldif-sort.jar {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}-sorted'
+    - shell: 'mv {{ workspace }}/{{ import_users_ldif }}-sorted {{ workspace }}/{{ import_users_ldif }}'
     - replace:
         path: '{{ workspace }}/{{ import_users_ldif }}'
         regexp: '{{ item.regexp }}'
@@ -211,12 +217,6 @@
         - { regexp: '(?i)^authpassword.+?\n', replace: '' }
         - { regexp: '(?i)^orcl.+?\n', replace: '' }
         - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
-    - copy:
-        src: 'ldif-sort.jar'
-        dest: '{{ workspace }}/ldif-sort.jar'
-        mode: 0644
-    - shell: 'java -jar {{ workspace }}/ldif-sort.jar {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}-sorted'
-    - shell: 'mv {{ workspace }}/{{ import_users_ldif }}-sorted {{ workspace }}/{{ import_users_ldif }}'
 
 - name: Import users
   when: import_users_ldif is defined and not is_consumer
@@ -269,14 +269,16 @@
 - name: Restart apacheds
   include: restart-apacheds.yml
 
+- name: Upload backup script
+  when: not is_consumer
+  template:
+    src: 'backup_ldap.sh.j2'
+    dest: '/usr/bin/backup_ldap'
+    mode: u+x
+
 - name: Create a cron job to perform daily backups
   when: not is_consumer
   cron:
     name: Backup to S3
+    job: 'backup_ldap'
     special_time: daily
-    job: >
-      (backupfile=/tmp/backup-$(date +%Y%m%d-%H%M%S).ldif &&
-      bind_password=$(aws ssm get-parameter --region eu-west-2 --with-decryption --name /{{ environment_name }}/{{ project_name }}/apacheds/apacheds/ldap_admin_password | jq -r .Parameter.Value) &&
-      ldapsearch -L {{ ldap_connection }} -b {{ base_root }} "(cn=*)" > ${backupfile} &&
-      aws s3 cp ${backupfile} s3://{{ s3_backups_bucket }}/ldap/ &&
-      rm -f ${backupfile}) >> /var/log/daily-backup.log 2>&1
