@@ -250,7 +250,7 @@
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
   register: import_users_from_master
-  failed_when: import_users_from_backup.rc not in [0,33,68]
+  failed_when: import_users_from_master.rc not in [0,33,68]
   # Allowed return codes:
   # 0=SUCCESS
   # 33=ALIAS_PROBLEM (invalid role association which should be ignored)
