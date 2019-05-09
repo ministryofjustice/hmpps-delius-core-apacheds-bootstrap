@@ -1,6 +1,15 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: Set facts
+  set_fact:
+    ldap_connection: '-H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
+    base_users: 'cn=Users,{{ base_root }}'
+    base_service_users: 'cn=EISUsers,{{ base_users }}'
+    base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
+    base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
+    partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
+
 - name: Wait for provider/master node
   when: is_consumer
   wait_for:
