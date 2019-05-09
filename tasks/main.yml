@@ -23,7 +23,7 @@
 
 - name: Set JVM memory args
   lineinfile:
-    path: '{{ apacheds_install_directory }}/conf/wrapper.conf'
+    path: '{{ apacheds_lib_directory }}/conf/wrapper.conf'
     insertafter: '^wrapper.java.additional.5=-Dapacheds.instance=%INSTANCE%$'
     line: 'wrapper.java.additional.6={{ jvm_mem_args }}'
 
@@ -76,7 +76,7 @@
   become_user: apacheds
   copy:
     src: 'files/NDelius-apacheds-lib-3.0.jar'
-    dest: '{{ apacheds_lib_directory }}/NDelius-apacheds-lib-3.0.jar'
+    dest: '{{ apacheds_lib_directory }}/lib/NDelius-apacheds-lib-3.0.jar'
     mode: 0644
 
 - name: Update admin password
