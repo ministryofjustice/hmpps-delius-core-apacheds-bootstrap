@@ -22,10 +22,13 @@
     timeout: 600
 
 - name: Set JVM memory args
-  lineinfile:
+  replace:
     path: '{{ apacheds_lib_directory }}/conf/wrapper.conf'
-    insertafter: '^wrapper.java.additional.5=-Dapacheds.instance=%INSTANCE%$'
-    line: 'wrapper.java.additional.6={{ jvm_mem_args }}'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { regexp: '^#wrapper.java.initmemory=.*$', replace: 'wrapper.java.initmemory={{ jvm_mem_args }}' }
+    - { regexp: '^#wrapper.java.maxmemory=.*$', replace: 'wrapper.java.maxmemory={{ jvm_mem_args }}' }
 
 - name: Start service apacheds, on boot
   service:
