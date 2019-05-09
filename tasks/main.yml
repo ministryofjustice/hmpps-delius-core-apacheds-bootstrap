@@ -4,11 +4,14 @@
 - name: Set facts
   set_fact:
     ldap_connection: '-H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
+    partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
     base_users: 'cn=Users,{{ base_root }}'
+
+- name: Set more facts
+  set_fact:
     base_service_users: 'cn=EISUsers,{{ base_users }}'
     base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
     base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
-    partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
 
 - name: Wait for provider/master node
   when: is_consumer
