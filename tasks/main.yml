@@ -5,6 +5,7 @@
   set_fact:
     ldap_connection: '-H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
     partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
+    consumer_id: 'consumer-{{ inventory_hostname }}'
     base_users: 'cn=Users,{{ base_root }}'
 
 - name: Set more facts
