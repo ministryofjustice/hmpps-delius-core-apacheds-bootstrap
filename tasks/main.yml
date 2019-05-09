@@ -1,6 +1,19 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: Set facts
+  set_fact:
+    ldap_connection: '-H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
+    partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
+    consumer_id: 'consumer-{{ inventory_hostname }}'
+    base_users: 'cn=Users,{{ base_root }}'
+
+- name: Set more facts
+  set_fact:
+    base_service_users: 'cn=EISUsers,{{ base_users }}'
+    base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
+    base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
+
 - name: Wait for provider/master node
   when: is_consumer
   wait_for:
@@ -8,6 +21,15 @@
     port: '{{ ldap_port }}'
     delay: 300
     timeout: 600
+
+- name: Set JVM memory args
+  replace:
+    path: '{{ apacheds_lib_directory }}/conf/wrapper.conf'
+    regexp: '{{ item.regexp }}'
+    replace: '{{ item.replace }}'
+  with_items:
+    - { regexp: '^#wrapper.java.initmemory=.*$', replace: 'wrapper.java.initmemory={{ jvm_mem_args }}' }
+    - { regexp: '^#wrapper.java.maxmemory=.*$', replace: 'wrapper.java.maxmemory={{ jvm_mem_args }}' }
 
 - name: Start service apacheds, on boot
   service:
@@ -58,7 +80,7 @@
   become_user: apacheds
   copy:
     src: 'files/NDelius-apacheds-lib-3.0.jar'
-    dest: '{{ apacheds_lib_directory }}/NDelius-apacheds-lib-3.0.jar'
+    dest: '{{ apacheds_lib_directory }}/lib/NDelius-apacheds-lib-3.0.jar'
     mode: 0644
 
 - name: Update admin password
