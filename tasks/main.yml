@@ -18,6 +18,12 @@
     delay: 300
     timeout: 600
 
+- name: Set JVM memory args
+  lineinfile:
+    path: '{{ apacheds_install_directory }}/conf/wrapper.conf'
+    insertafter: '^wrapper.java.additional.5=-Dapacheds.instance=%INSTANCE%$'
+    line: 'wrapper.java.additional.6={{ jvm_mem_args }}'
+
 - name: Start service apacheds, on boot
   service:
     name: "{{ apacheds_version }}"
