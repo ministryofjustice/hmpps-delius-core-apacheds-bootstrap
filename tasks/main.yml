@@ -14,13 +14,22 @@
     base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
     base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
 
+- name: Block inbound access on ldap_port until bootstrap is finished
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: '{{ ldap_port }}'
+    jump: REJECT
+    state: present
+  become: yes
+
 - name: Wait for provider/master node
   when: is_consumer
   wait_for:
     host: '{{ provider_host }}'
     port: '{{ ldap_port }}'
     delay: 300
-    timeout: 600
+    timeout: 3600
 
 - name: Set JVM memory args
   replace:
@@ -312,3 +321,12 @@
     name: Backup to S3
     job: 'backup_ldap'
     special_time: daily
+
+- name: Re-enable inbound access on ldap_port
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: '{{ ldap_port }}'
+    jump: REJECT
+    state: absent
+  become: yes
