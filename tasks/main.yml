@@ -18,6 +18,7 @@
   iptables:
     chain: INPUT
     protocol: tcp
+    source: !127.0.0.1
     destination_port: '{{ ldap_port }}'
     jump: REJECT
     state: present
@@ -326,6 +327,7 @@
   iptables:
     chain: INPUT
     protocol: tcp
+    source: !127.0.0.1
     destination_port: '{{ ldap_port }}'
     jump: REJECT
     state: absent
