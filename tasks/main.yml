@@ -1,11 +1,15 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: Get hostname
+  shell: hostname
+  register: hostname
+
 - name: Set facts
   set_fact:
     ldap_connection: '-H {{ ldap_protocol }}://localhost:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
     partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
-    consumer_id: 'consumer-{{ inventory_hostname }}'
+    consumer_id: 'consumer-{{ hostname.stdout }}'
     base_users: 'cn=Users,{{ base_root }}'
 
 - name: Set more facts
@@ -14,13 +18,29 @@
     base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
     base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
 
-- name: Wait for provider/master node
-  when: is_consumer
-  wait_for:
-    host: '{{ provider_host }}'
-    port: '{{ ldap_port }}'
-    delay: 300
-    timeout: 600
+- name: Block inbound access on ldap_port until bootstrap is finished
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    source: '!127.0.0.1'
+    destination_port: '{{ ldap_port }}'
+    jump: REJECT
+    state: present
+  become: yes
+
+- when: is_consumer
+  block:
+  - name: Wait for provider/master node (initial delay)
+    wait_for: timeout=60
+    delegate_to: localhost
+  - name: Wait for provider/master node
+    shell: 'ldapwhoami -H {{ ldap_protocol }}://{{ provider_host }}:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
+    retries: 360
+    delay: 10
+    register: result
+    until: result.rc == 0
+    environment:
+      bind_password: '{{ bind_password }}'
 
 - name: Set JVM memory args
   replace:
@@ -312,3 +332,13 @@
     name: Backup to S3
     job: 'backup_ldap'
     special_time: daily
+
+- name: Re-enable inbound access on ldap_port
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    source: '!127.0.0.1'
+    destination_port: '{{ ldap_port }}'
+    jump: REJECT
+    state: absent
+  become: yes
