@@ -31,7 +31,7 @@
 - when: is_consumer
   block:
   - name: Wait for provider/master node (initial delay)
-    wait_for: timeout=5
+    wait_for: timeout=60
     delegate_to: localhost
   - name: Wait for provider/master node
     shell: 'ldapwhoami -H {{ ldap_protocol }}://{{ provider_host }}:{{ ldap_port }} -D {{ bind_user }} -w ${bind_password}'
