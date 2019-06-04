@@ -1,6 +1,14 @@
 ---
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
+- name: (main) set tag to indicate deployment
+  ec2_tag:
+    region: "{{ region }}"
+    resource: "{{ instance_id }}"
+    state: present
+    tags:
+      ndelius_version: "Deploying - {{ ndelius_version }}"
+
 - name: Get hostname
   shell: hostname
   register: hostname
@@ -342,3 +350,11 @@
     jump: REJECT
     state: absent
   become: yes
+
+- name: (main) set tag to indicate deployed ndelius_version
+  ec2_tag:
+    region: "{{ region }}"
+    resource: "{{ instance_id }}"
+    state: present
+    tags:
+      ndelius_version: "{{ ndelius_version }}"
