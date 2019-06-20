@@ -2,7 +2,7 @@ dn: {{ base_service_users }}
 objectclass: top
 objectclass: javaContainer
 
-dn: cn=OASYS-User,{{ base_service_users }}
+dn: cn={{ oasys_user }},{{ base_service_users }}
 businesscategory: OIBI096
 businesscategory: OIBI097
 businesscategory: OABI007
@@ -11,10 +11,11 @@ objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
 objectclass: top
-sn: OASYS-User
-cn: OASYS-User
+sn: {{ oasys_user }}
+cn: {{ oasys_user }}
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/oasys_user_password', region=region) }}
 
-dn: cn=IAPS-User,{{ base_service_users }}
+dn: cn={{ iaps_user }},{{ base_service_users }}
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
@@ -36,17 +37,19 @@ businesscategory: CLBI003
 businesscategory: CLBI007
 businesscategory: CLBI044
 businesscategory: SEBI021
-sn: IAPS-User
-cn: IAPS-User
+sn: {{ iaps_user }}
+cn: {{ iaps_user }}
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/iaps_user_password', region=region) }}
 
-dn: cn=DSS-User,{{ base_service_users }}
+dn: cn={{ dss_user }},{{ base_service_users }}
 objectclass: inetOrgPerson
 objectclass: organizationalPerson
 objectclass: person
 objectclass: top
 businesscategory: DSBI004
-sn: DSS-User
-cn: DSS-User
+sn: {{ dss_user }}
+cn: {{ dss_user }}
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/dss_user_password', region=region) }}
 
 {% for item in ['ALF','SPG','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21'] %}
 dn: cn={{ item }},{{ base_users }}
