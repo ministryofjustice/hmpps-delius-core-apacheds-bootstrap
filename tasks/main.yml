@@ -89,6 +89,7 @@
     - { file: partition.ldif }
     - { file: context.ldif }
     - { file: schema.ldif }
+    - { file: pwm-schema.ldif }
     - { file: service-users.ldif }
     - { file: modify-schema.ldif }
     - { file: modify-admin.ldif }
@@ -169,6 +170,7 @@
   with_items:
     - { file: partition.ldif }
     - { file: schema.ldif }
+    - { file: pwm-schema.ldif }
     - { file: interceptor.ldif }
 
 - name: Replace Base64-encoded creatorsName attribute in schema with plaintext value

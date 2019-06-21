@@ -51,6 +51,25 @@ sn: {{ dss_user }}
 cn: {{ dss_user }}
 userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/dss_user_password', region=region) }}
 
+dn: cn=pwm-test,{{ base_users }}
+cn: pwm-test
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/pwm/pwm/config_password', region=region) }}
+objectclass: pwmUser
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+
+dn: cn=pwm-admin,{{ base_users }}
+cn: pwm-admin
+pwmAdmin: true
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/pwm/pwm/config_password', region=region) }}
+objectclass: pwmUser
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+
 {% for item in ['ALF','SPG','C01','C02','C03','C04','C05','C06','C07','C08','C09','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21'] %}
 dn: cn={{ item }},{{ base_users }}
 givenname: {{ item }}
