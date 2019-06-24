@@ -177,9 +177,12 @@
   become: yes
   become_user: apacheds
   replace:
-    path: '~/default/partitions/schema/ou=schema/cn=subschemasubentry.ldif'
+    path: '~/default/partitions/schema/ou=schema/{{ item.schema }}'
     regexp: 'creatorsName:: [\w\W\n]+?(.+?):'
     replace: 'creatorsName: {{ bind_user }}\n\1:'
+  with_items:
+    - { schema: cn=subschemasubentry.ldif }
+    - { schema: cn=pwm.ldif }
 
 - name: Modify existing schema objects
   become: yes
