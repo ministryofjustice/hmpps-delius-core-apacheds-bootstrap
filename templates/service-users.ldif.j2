@@ -53,6 +53,7 @@ userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apach
 
 dn: cn=pwm-test,{{ base_users }}
 cn: pwm-test
+sn: pwm-test
 userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/pwm/pwm/config_password', region=region) }}
 objectclass: pwmUser
 objectclass: inetOrgPerson
@@ -62,6 +63,7 @@ objectclass: top
 
 dn: cn=pwm-admin,{{ base_users }}
 cn: pwm-admin
+sn: pwm-admin
 pwmAdmin: true
 userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/pwm/pwm/config_password', region=region) }}
 objectclass: pwmUser
