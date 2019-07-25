@@ -19,6 +19,7 @@
     partition_context_entry: 'dn:{{ base_root }}\ndc:{{ partition_id }}\nobjectclass:domain\nobjectclass:top'
     consumer_id: 'consumer-{{ hostname.stdout }}'
     base_users: 'cn=Users,{{ base_root }}'
+    casenotes_user: "{{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/casenotes_user', region=region) }}"
     oasys_user: "{{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/oasys_user', region=region) }}"
     iaps_user: "{{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/iaps_user', region=region) }}"
     dss_user: "{{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/dss_user', region=region) }}"

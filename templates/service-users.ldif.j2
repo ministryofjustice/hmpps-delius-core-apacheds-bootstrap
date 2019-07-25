@@ -124,6 +124,15 @@ objectclass: top
 cn: SPGBT900
 
 {% endfor %}
+dn: cn={{ casenotes_user }},{{ base_service_users }}
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+sn: {{ casenotes_user }}
+cn: {{ casenotes_user }}
+userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/casenotes_password', region=region) }}
+
 dn: cn=DSS-Group,{{ base_service_users }}
 objectclass: groupOfUniqueNames
 objectclass: top
@@ -141,6 +150,12 @@ objectclass: groupOfUniqueNames
 objectclass: top
 uniquemember: cn=oasys-user,{{ base_service_users }}
 cn: OASYS-Group
+
+dn: cn=CaseNotesAPI-Group,{{ base_service_users }}
+objectclass: groupOfUniqueNames
+objectclass: top
+uniquemember: cn=casenotes-user,{{ base_service_users }}
+cn: CaseNotesAPI-Group
 
 dn: cn=SPG-Group,{{ base_service_users }}
 objectclass: groupOfUniqueNames
