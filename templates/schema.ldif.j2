@@ -358,6 +358,16 @@ m-name: endDate
 m-equality: caseIgnoreMatch
 m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
 
+dn: m-oid=1.1.1.1.48,ou=attributetypes,cn=subschemasubentry,ou=schema
+objectclass: metaAttributeType
+objectclass: metaTop
+objectclass: top
+m-oid: 1.1.1.1.47
+m-name: memberOf
+m-equality: caseIgnoreMatch
+m-syntax: 1.3.6.1.4.1.1466.115.121.1.15
+m-singleValue: FALSE
+
 dn: m-oid=1.1.1.1.21,ou=objectclasses,cn=subschemasubentry,ou=schema
 objectclass: metaObjectClass
 objectclass: metaTop
@@ -435,3 +445,4 @@ m-must: userSector
 m-may: userHomeArea
 m-may: startDate
 m-may: endDate
+m-may: memberOf
