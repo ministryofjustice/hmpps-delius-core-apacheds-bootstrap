@@ -1,0 +1,11 @@
+---
+
+- name: Create performance test users
+  when: perf_test_users is defined and perf_test_users|int > 0
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
+  environment:
+    bind_password: '{{ bind_password }}'
+  with_items:
+    - { file: test-users.ldif }

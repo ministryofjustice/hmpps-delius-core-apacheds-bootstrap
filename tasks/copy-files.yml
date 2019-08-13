@@ -27,6 +27,7 @@
     - { file: repl-provider.ldif }
     - { file: repl-consumer.ldif }
     - { file: interceptor.ldif }
+    - { file: test-users.ldif }
 
 - name: Copy config
   become: yes
