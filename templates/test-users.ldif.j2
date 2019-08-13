@@ -1,4 +1,4 @@
-{% for item in range(1, perf_test_users) %}
+{% for item in range(1, perf_test_users|default('0')|int) %}
 dn:cn={{ 'nd.perf%05d' % item }},{{ base_users }}
 cn:{{ 'nd.perf%05d' % item }}
 uid:{{ 'nd.perf%05d' % item }}
@@ -1032,13 +1032,6 @@ objectclass: top
 dn:cn=SPGADBT004,cn={{ 'nd.perf%05d' % item }},{{ base_users }}
 aliasedobjectname:cn=SPGADBT004,{{ base_roles }}
 cn: SPGADBT004
-objectclass: NDRoleAssociation
-objectclass: alias
-objectclass: top
-
-dn:cn=SPGADBT005,cn={{ 'nd.perf%05d' % item }},{{ base_users }}
-aliasedobjectname:cn=SPGADBT005,{{ base_roles }}
-cn: SPGADBT005
 objectclass: NDRoleAssociation
 objectclass: alias
 objectclass: top
