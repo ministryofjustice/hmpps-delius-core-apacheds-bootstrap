@@ -1,0 +1,47 @@
+---
+# tasks file for hmpps-delius-core-apacheds-bootstrap
+
+- name: Pull data from provider/master node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: >
+    ldapsearch -L
+    -H {{ ldap_protocol }}://{{ provider_host }}:{{ ldap_port }}
+    -D {{ bind_user }} -w ${bind_password}
+    -b {{ base_root }} "(objectclass=*)" > {{ workspace }}/master-data.ldif
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Import data from provider/master node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/master-data.ldif'
+  register: import_users_from_master
+  failed_when: import_users_from_master.rc not in [0,33,68]
+  # Allowed return codes:
+  # 0=SUCCESS
+  # 33=ALIAS_PROBLEM (invalid role association which should be ignored)
+  # 68=ENTRY_EXISTS (duplicate entries should be ignored)
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a provider (master) node
+  when: not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-provider.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Set host as a consumer (slave) node
+  when: is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/repl-consumer.ldif'
+  environment:
+    bind_password: '{{ bind_password }}'
+
+- name: Restart apacheds
+  include: restart-apacheds.yml

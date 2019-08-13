@@ -1,0 +1,31 @@
+---
+# tasks file for hmpps-delius-core-apacheds-bootstrap
+
+- name: Import roles, groups and service users
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -f {{ workspace }}/{{ item.file }}'
+  environment:
+    bind_password: '{{ bind_password }}'
+  with_items:
+    - { file: context.ldif }
+    - { file: nd_role_catalogue.ldif }
+    - { file: nd_role_groups.ldif }
+    - { file: service-users.ldif }
+
+- name: Restart apacheds
+  include: restart-apacheds.yml
+
+- name: Import users
+  when: import_users_ldif is defined and not is_consumer
+  become: yes
+  become_user: apacheds
+  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
+  register: import_users_from_backup
+  failed_when: import_users_from_backup.rc not in [0,33,68]
+  # Allowed return codes:
+  # 0=SUCCESS
+  # 33=ALIAS_PROBLEM (invalid role association which should be ignored)
+  # 68=ENTRY_EXISTS (duplicate entries should be ignored)
+  environment:
+    bind_password: '{{ bind_password }}'

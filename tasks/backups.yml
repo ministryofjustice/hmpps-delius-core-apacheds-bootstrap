@@ -1,0 +1,9 @@
+---
+# tasks file for hmpps-delius-core-apacheds-bootstrap
+
+- name: Create a cron job to perform daily backups
+  when: not is_consumer
+  cron:
+    name: Backup to S3
+    job: 'backup_ldap'
+    special_time: daily
