@@ -31,6 +31,7 @@ is_consumer: Whether this node is a master (provider) or slave (consumer) node
 # Data import
 import_users_ldif: LDIF file to import from the s3_backups_bucket. This can be set to LATEST to retrieve the latest backup from S3.
 sanitize_oid_ldif: Whether to remove Oracle-specific attributes from the LDIF
+perf_test_users: Number of users to create to support performance testing. Default=0
 
 ```
 See the full list of variable defaults in [defaults/main.yml](defaults/main.yml)

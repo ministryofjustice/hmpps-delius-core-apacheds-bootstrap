@@ -1,0 +1,12 @@
+---
+# tasks file for hmpps-delius-core-apacheds-bootstrap
+
+- name: Update admin password
+  become: yes
+  become_user: apacheds
+  shell: 'ldapmodify {{ ldap_connection }} -f {{ workspace }}/modify-admin.ldif'
+  environment:
+    bind_password: 'secret'
+
+- name: Restart apacheds
+  include: restart-apacheds.yml
