@@ -83,13 +83,13 @@
     import_users_ldif: '{{ latest_backup.stdout }}'
 
 - name: Create LDIF directory
-  when: import_users_ldif is defined and not is_consumer
+  when: import_users_ldif != '' and not is_consumer
   become: yes
   become_user: apacheds
   shell: 'mkdir -p $(dirname {{ workspace }}/{{ import_users_ldif }})'
 
 - name: Download LDIF file for import
-  when: import_users_ldif is defined and not is_consumer
+  when: import_users_ldif != '' and not is_consumer
   become: yes
   become_user: apacheds
   aws_s3:
@@ -99,7 +99,7 @@
     mode: get
 
 - name: Remove OID-specific stuff from LDIF and sort hierarchically
-  when: import_users_ldif is defined and not is_consumer and sanitize_oid_ldif
+  when: import_users_ldif != '' and not is_consumer and sanitize_oid_ldif
   block:
     - copy:
         src: 'ldif-sort.jar'

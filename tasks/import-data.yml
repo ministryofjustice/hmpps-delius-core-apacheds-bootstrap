@@ -17,7 +17,7 @@
   include: restart-apacheds.yml
 
 - name: Import users
-  when: import_users_ldif is defined and not is_consumer
+  when: import_users_ldif != '' and not is_consumer
   become: yes
   become_user: apacheds
   shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }}'
