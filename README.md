@@ -40,11 +40,8 @@ Dependencies
 ------------
 There are some JARs included in the project that are used during the bootstrap:
 
-* ldif-sort.jar - 
-Built from the GitHub project at [nano-byte/ldif-sort](https://github.com/nano-byte/ldif-sort) and stored in the files directory. 
-As migrated data from Oracle Internet Directory isn't guaranteed to be in the correct hierarchical order, this is used to correct it.
 * NDelius-apacheds-lib-3.0.jar -
-Provided by Beaumont Colson and provides interceptors for NDelius-specific LDAP attributes.
+Provides interceptors for NDelius-specific LDAP attributes.
 
 License
 -------

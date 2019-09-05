@@ -102,10 +102,10 @@
   when: import_users_ldif != '' and not is_consumer and sanitize_oid_ldif
   block:
     - copy:
-        src: 'ldif-sort.jar'
-        dest: '{{ workspace }}/ldif-sort.jar'
-        mode: 0644
-    - shell: 'java -jar {{ workspace }}/ldif-sort.jar {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/{{ import_users_ldif }}-sorted'
+        src: 'ldif-sort.sh'
+        dest: '{{ workspace }}/ldif-sort.sh'
+        mode: u+x
+    - shell: 'cat {{ workspace }}/{{ import_users_ldif }} | ./ldif-sort.sh > {{ workspace }}/{{ import_users_ldif }}-sorted'
     - shell: 'mv {{ workspace }}/{{ import_users_ldif }}-sorted {{ workspace }}/{{ import_users_ldif }}'
     - replace:
         path: '{{ workspace }}/{{ import_users_ldif }}'
