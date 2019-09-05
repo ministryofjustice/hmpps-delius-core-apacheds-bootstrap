@@ -127,6 +127,9 @@
         - { regexp: '(?i)^authpassword.+?\n', replace: '' }
         - { regexp: '(?i)^orcl.+?\n', replace: '' }
         - { regexp: '(?i)^krbprincipalname.+?\n', replace: '' }
+        # Fix to handle pre-prod data containing an invalid NDProd ou:
+        - { regexp: '(?i)^ou: NDProd\nobjectclass: groupOfNames', replace: 'ou: NDProd\nobjectclass: organizationalUnit' }
+        - { regexp: '(?i)^cn: NDProd.*?\n', replace: '' }
 
 - name: Upload backup script
   when: not is_consumer
