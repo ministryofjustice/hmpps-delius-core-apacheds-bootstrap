@@ -7,14 +7,16 @@
 #
 # This is done using the following steps:
 # 1. Convert line-endings to unix
-# 2. Squash LDIF entry paragraphs into single lines
-# 3. Prepend each line with a count of the commas (,) in the dn attribute
-# 4. Sort the lines numerically
-# 5. Remove the prepended comma counts
-# 6. Expand LDIF entries back into paragraphs
+# 2. Remove any comment lines
+# 3. Squash LDIF entry paragraphs into single lines
+# 4. Prepend each line with a count of the commas (,) in the dn attribute
+# 5. Sort the lines numerically
+# 6. Remove the prepended comma counts
+# 7. Expand LDIF entries back into paragraphs
 #
 
 sed $'s/\r$//' \
+| sed '/^#/d' \
 | awk 'BEGIN{RS="\n\n" ; ORS="\2";}{ print }' \
 | awk 'BEGIN{RS="\n" ; ORS="\1";}{ print }' \
 | awk 'BEGIN{RS="\2" ; ORS="\n";}{ print }' \
