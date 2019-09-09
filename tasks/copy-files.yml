@@ -105,7 +105,7 @@
         src: 'ldif-sort.sh'
         dest: '{{ workspace }}/ldif-sort.sh'
         mode: u+x
-    - shell: 'cat {{ workspace }}/{{ import_users_ldif }} | ./ldif-sort.sh > {{ workspace }}/{{ import_users_ldif }}-sorted'
+    - shell: 'cat {{ workspace }}/{{ import_users_ldif }} | {{ workspace }}/ldif-sort.sh > {{ workspace }}/{{ import_users_ldif }}-sorted'
     - shell: 'mv {{ workspace }}/{{ import_users_ldif }}-sorted {{ workspace }}/{{ import_users_ldif }}'
     - replace:
         path: '{{ workspace }}/{{ import_users_ldif }}'
