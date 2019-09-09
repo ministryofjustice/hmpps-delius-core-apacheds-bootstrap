@@ -3,7 +3,7 @@ dn:cn={{ 'nd.perf%05d' % item }},{{ base_users }}
 cn:{{ 'nd.perf%05d' % item }}
 uid:{{ 'nd.perf%05d' % item }}
 mail:{{ 'nd.perf%05d' % item }}
-userPassword: {{ lookup('aws_ssm', '/'+environment_name+'/'+project_name+'/apacheds/apacheds/performance_test_user_password', region=region) }}
+userPassword: {{ performance_test_user_password }}
 description:Performance test user {{ '%d' % item }}
 givenname:{{ 'nd.perf%05d' % item }}
 sn:{{ 'nd.perf%05d' % item }}
