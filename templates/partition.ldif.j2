@@ -17,8 +17,8 @@ objectclass: top
 
 # System indexes (mandatory for apacheds):
 {% for item in ['apacheRdn', 'apachePresence', 'apacheOneAlias', 'apacheSubAlias', 'apacheAlias', 'dc', 'objectClass', 'entryCSN', 'administrativeRole'] %}
-dn: ads-indexAttributeId=apacheRdn,ou=indexes,ads-partitionId={{ partition_id }},ou=partitions,ads-directoryServiceId=default,ou=config
-ads-indexattributeid: apacheRdn
+dn: ads-indexAttributeId={{ item }},ou=indexes,ads-partitionId={{ partition_id }},ou=partitions,ads-directoryServiceId=default,ou=config
+ads-indexattributeid: {{ item }}
 ads-indexHasReverse: TRUE
 ads-indexcachesize: 100
 objectclass: ads-index
