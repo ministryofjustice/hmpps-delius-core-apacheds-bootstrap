@@ -19,7 +19,7 @@ sed $'s/\r$//' \
 | awk 'BEGIN{RS="\n" ; ORS="\1";}{ print }' \
 | awk 'BEGIN{RS="\2" ; ORS="\n";}{ print }' \
 | while IFS= read -r line; do
-    dn=$(echo ${line} | grep -Eo 'dn:[^:]+?:')
+    dn=$(echo "${line}" | grep -Eo 'dn:[^:]+?:')
     commas=${dn//[^,]}
     count=${#commas}
     echo "${count} ${line}"
