@@ -112,6 +112,7 @@
         regexp: '{{ item.regexp }}'
         replace: '{{ item.replace }}'
       with_items:
+        - { regexp: '\n ([^\n])', replace: '\1' }
         - { regexp: '(?i)dn: cn=users[\w\W]+?\n\n', replace: '' }
         - { regexp: '(?i)dn:.*eisusers[\w\W]+?\n\n', replace: '' }
         - { regexp: '(?i)dn:.*cn=SPG,[\w\W]+?\n\n', replace: '' }
@@ -130,6 +131,8 @@
         # Fix to handle pre-prod data containing an invalid NDProd ou:
         - { regexp: '(?i)^ou: NDProd\nobjectclass: groupOfNames', replace: 'ou: NDProd\nobjectclass: organizationalUnit' }
         - { regexp: '(?i)^cn: NDProd.*?\n', replace: '' }
+        # Fix to handle incorrect context set on aliasedobjectname attributes
+        - { regexp: '(?i)(aliasedobjectname:.+?,cn=ndRoleCatalogue,).+?\n', replace: '\1{{ base_users }}\n' }
 
 - name: Upload backup script
   when: not is_consumer
