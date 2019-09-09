@@ -2,13 +2,13 @@
 # tasks file for hmpps-delius-core-apacheds-bootstrap
 
 - name: Set JVM memory args
-  replace:
+  lineinfile:
     path: '{{ apacheds_lib_directory }}/conf/wrapper.conf'
-    regexp: '{{ item.regexp }}'
-    replace: '{{ item.replace }}'
+    line: '{{ item.line }}'
+    create: yes
   with_items:
-    - { regexp: '^#wrapper.java.initmemory=.*$', replace: 'wrapper.java.initmemory={{ jvm_mem_args }}' }
-    - { regexp: '^#wrapper.java.maxmemory=.*$', replace: 'wrapper.java.maxmemory={{ jvm_mem_args }}' }
+    - { line: 'wrapper.java.additional.6=-Xms{{ jvm_mem_args }}m' }
+    - { line: 'wrapper.java.additional.7=-Xmx{{ jvm_mem_args }}m' }
 
 - name: Start service apacheds, on boot
   service:
