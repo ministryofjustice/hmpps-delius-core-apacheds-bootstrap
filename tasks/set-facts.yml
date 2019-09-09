@@ -22,3 +22,15 @@
     base_service_users: 'cn=EISUsers,{{ base_users }}'
     base_roles: 'cn=ndRoleCatalogue,{{ base_users }}'
     base_rolegroups: 'cn=ndRoleGroups,{{ base_users }}'
+
+- name: Get the name of the latest backup
+  when: import_users_ldif == 'LATEST'
+  become: yes
+  become_user: apacheds
+  shell: "aws s3 ls s3://{{ s3_backups_bucket }}/ldap/ --recursive | sort | tail -n 1 | awk '{print $4}'"
+  register: latest_backup
+
+- name: Store the name of the latest backup
+  when: import_users_ldif == 'LATEST'
+  set_fact:
+    import_users_ldif: '{{ latest_backup.stdout }}'
