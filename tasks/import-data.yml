@@ -20,7 +20,7 @@
   when: import_users_ldif != '' and not is_consumer
   become: yes
   become_user: apacheds
-  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/log/import_users.log 2>&1'
+  shell: 'ldapadd {{ ldap_connection }} -c -f {{ workspace }}/{{ import_users_ldif }} > {{ workspace }}/import_users.log 2>&1'
   register: import_users_from_backup
   failed_when: import_users_from_backup.rc not in [0,33,68]
   # Allowed return codes:
