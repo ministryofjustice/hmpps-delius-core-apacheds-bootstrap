@@ -1,3 +1,7 @@
+ARCHIVED
+========
+This project is no longer maintained or in use. See https://github.com/ministryofjustice/hmpps-delius-core-ldap-bootstrap for the OpenLDAP bootstrap repository.
+
 hmpps-delius-core-apacheds-bootstrap
 =========
 
